@@ -1,0 +1,54 @@
+name: Build Docker
+
+on:
+  push:
+    branches:
+      - 'main'
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+  TAG: v10.2.0
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        id: checkout
+        run: |
+          git clone --depth 1 --branch $TAG https://github.com/grafana/grafana.git
+          cd grafana
+
+          echo "GRAFANA_TAG=$TAG" >> $GITHUB_OUTPUT
+
+        shell: bash
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: ./grafana
+          file: ./grafana/Dockerfile
+          platforms: linux/arm/v7 
+          build-args: BINGO="false"
+          push: true
+          tags: ${{ steps.checkout.outputs.GRAFANA_TAG }}
+          labels: ${{ steps.meta.outputs.labels }}
