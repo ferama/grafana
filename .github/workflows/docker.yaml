@@ -7,7 +7,6 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
-  TAG: v10.2.0
 
 jobs:
   docker:
@@ -16,10 +15,22 @@ jobs:
       - name: Checkout
         id: checkout
         run: |
-          git clone --depth 1 --branch $TAG https://github.com/grafana/grafana.git
+
+          tags=`curl -s "https://api.github.com/repos/grafana/grafana/tags" | jq -r '.[].name'`
+          latestUpstreamTag=""
+          for t in $tags
+          do
+              if [[ $t =~ ^v[0-9\.]+$ ]]
+              then
+                  latestUpstreamTag=$t
+                  break
+              fi
+          done
+
+          git clone --depth 1 --branch $latestUpstreamTag https://github.com/grafana/grafana.git
           cd grafana
 
-          echo "GRAFANA_TAG=$TAG" >> $GITHUB_OUTPUT
+          echo "GRAFANA_TAG=$latestUpstreamTag" >> $GITHUB_OUTPUT
 
         shell: bash
 
