@@ -44,5 +44,5 @@ jobs:
           platforms: linux/arm/v7 
           build-args: BINGO="false"
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.checkout.outputs.GRAFANA_TAG }}
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:10.2.0
           labels: ${{ steps.meta.outputs.labels }}
