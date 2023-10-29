@@ -33,6 +33,7 @@ jobs:
           echo "Upstream tag is $latestUpstreamTag"
           echo "Local tag is $latestTag"
           if [[ $latestUpstreamTag != $latestTag ]]
+          then
             git clone --depth 1 --branch $latestUpstreamTag https://github.com/grafana/grafana.git
             echo "GRAFANA_TAG=$latestUpstreamTag" >> $GITHUB_OUTPUT
           fi
