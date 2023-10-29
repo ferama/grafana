@@ -31,14 +31,16 @@ jobs:
           token=`curl -s https://ghcr.io/token\?scope\="repository:ferama/grafana:pull" | jq -r .token`
           latestTag=`curl -s -H "Authorization: Bearer ${token}" https://ghcr.io/v2/ferama/grafana/tags/list | jq -r .tags[0]`
 
+          echo "Upstream tag is $latestUpstreamTag"
+          echo "Local tag is $latestTag"
           if [[ $latestUpstreamTag == $latestTag ]]
           then
             echo "Already built"
             gh run cancel ${{ github.run_id }}
             gh run watch ${{ github.run_id }}
           else
-              git clone --depth 1 --branch $latestUpstreamTag https://github.com/grafana/grafana.git
-              echo "GRAFANA_TAG=$latestUpstreamTag" >> $GITHUB_OUTPUT
+            git clone --depth 1 --branch $latestUpstreamTag https://github.com/grafana/grafana.git
+            echo "GRAFANA_TAG=$latestUpstreamTag" >> $GITHUB_OUTPUT
           fi
 
         shell: bash
