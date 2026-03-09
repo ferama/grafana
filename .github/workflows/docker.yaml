@@ -41,7 +41,7 @@ jobs:
         shell: bash
 
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@v4
         if: ${{ steps.checkout.outputs.GRAFANA_TAG != '' }}
 
       - name: Set up Docker Buildx
