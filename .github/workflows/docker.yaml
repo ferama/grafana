@@ -49,7 +49,7 @@ jobs:
         if: ${{ steps.checkout.outputs.GRAFANA_TAG != '' }}
 
       - name: Login to Docker registry
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         if: ${{ steps.checkout.outputs.GRAFANA_TAG != '' }}
         with:
           registry: ${{ env.REGISTRY }}
